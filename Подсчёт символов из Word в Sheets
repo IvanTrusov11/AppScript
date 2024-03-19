@@ -1,0 +1,27 @@
+// Подсчёт символов. 
+// Беру ссылку с ячейки G2+ , записываю результат (кол-во символов без пробелов) в ячейку D2+, записываю результат (кол-во символов с пробелами) в ячейку E2+. 
+
+function countCharactersInDoc() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var lastRow = sheet.getLastRow();
+
+  for (var i = 2; i <= lastRow; i++) {
+    var currentDocUrl = sheet.getRange('G' + i).getValue();
+    var currentDocId = getIdFromUrl(currentDocUrl);
+    var doc = DocumentApp.openById(currentDocId);
+    var text = doc.getBody().getText();
+    var numCharactersWithSpaces = text.length;
+    var numCharactersWithoutSpaces = text.replace(/\s/g, '').length;
+    sheet.getRange('D' + i).setValue(numCharactersWithSpaces);
+    sheet.getRange('E' + i).setValue(numCharactersWithoutSpaces);
+  }
+}
+
+function getIdFromUrl(url) {
+  var id = "";
+  var matches = url.match(/[-\w]{25,}/);
+  if (matches) {
+    id = matches[0];
+  }
+  return id;
+}
